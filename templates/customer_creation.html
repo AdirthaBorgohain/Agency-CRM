@@ -10,7 +10,7 @@
 
             <form class="customer-create-form">
                 Full Name: <input id="name" type="text"  name="name" required><br>
-                Address: <textarea id="address" name="address" required rows="4" cols="27"></textarea><br>
+                Address: <textarea id="address" name="address" required rows="4" cols="30"></textarea><br>
                 Contact: <input id="contact" type="text" maxlength="10" name="contact" required><br>
                 Type: <select id="customerType" name="customer_type" required>
                     <option value="Agent">Agent</option>
@@ -71,11 +71,12 @@
                 //if received a response from the server
                 success: function (response) {
                     console.log(response)
-                    alert("New " + customer_type + " Successfully Added")
+                    alert("New " + $("#customerType").val() + " Successfully Added")
+                    window.location = '/';
                 },
 
                 error: function (response) {
-                    alert("ERROR! " + customer_type + " probably already exists in database")
+                    alert("ERROR! " + $("#customerType").val() + " probably already exists in database")
                 }
             });
         }
