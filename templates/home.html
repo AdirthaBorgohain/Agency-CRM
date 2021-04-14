@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <h3>Admin Dashboard</h3>
+            <hr>
+            <h4>Hello, <strong>{{user.username}}</strong></h4>
+        </div>
+
+        <ul class="list-unstyled components">
+            <p>M/S Sarmah Brothers</p>
+            <li class="active">
+                <a href="">Home</a>
+            </li>
+            <li>
+                <a href="analytics">Analytics</a>
+            </li>
+            <li>
+                <a href="customers">Customers and Agents</a>
+            </li>
+            <hr>
+            <li>
+                <a href="/logout">Logout</a>
+            </li>
+        </ul>
+    </nav>
+    <!-- Main Content -->
+    <div id="content" style="width: 100%">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="btn">
+                    <i class="fab fa-elementor"></i>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+        <div class="container">
+            <hr>
+            <div style="margin-bottom: 2%;" class="container">
+                <div class="row">
+                    <div class="col-12 col-md-10">
+                        <div class="row tripletRow">
+                            <div class="col-lg-3">
+                                <button
+                                    style="background-image: url('/static/images/test.png'); background-size: cover;"
+                                    class="btn" onclick="window.location = '/add_customer'">
+                                    <!-- <i class="fas fa-users"></i><br> -->
+                                    <!-- <strong>Add New Customer/Agent</strong> -->
+                                </button>
+                            </div>
+                            <div class="col-lg-3">
+                                <button
+                                    style="background-image: url('/static/images/test2.png'); background-size: cover;"
+                                    class="btn" onclick="window.location = '/create_invoice'">
+                                    <!-- <i class="fas fa-receipt"></i><br> -->
+                                    <!-- <strong>Create Customer Invoice</strong> -->
+                                </button>
+                            </div>
+                            <div class="col-lg-3">
+                                <button
+                                    style="background-image: url('/static/images/test4.png'); background-size: cover;"
+                                    class="btn" onclick="window.location = '/create_bill'">
+                                    <!-- <i class="fas fa-receipt"></i><br> -->
+                                    <!-- <strong>Create Agent Bill</strong> -->
+                                </button>
+                            </div>
+                            <div class="col-lg-3">
+                                <button
+                                    style="background-image: url('/static/images/test3.png'); background-size: cover;"
+                                    class="btn" onclick="window.location = '/add_product'">
+                                    <!-- <i class="fas fa-newspaper"></i><br> -->
+                                    <!-- <strong>Add New Paper/Magazine</strong> -->
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-2"></div>
+                </div>
+                <div></div>
+            </div>
+
+            <hr>
+            <div class="container" style="margin-bottom: 2% !important;">
+                <div class="row">
+                    <div class="col-12 col-md-7">
+                        <div class="p-1 bg-light rounded rounded-pill shadow-sm mb-4">
+                            <div class="input-group">
+                                <input id="searchAgent" type="search" placeholder="Search in agents..."
+                                    aria-describedby="button-addon1" class="form-control border-0 bg-light">
+                                <div class="input-group-append">
+                                    <button id="button-addon1" type="submit" class="btn btn-link text-primary"><i
+                                            class="fa fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table100 ver2 m-b-110">
+                            <div class="table100-head">
+                                <table>
+                                    <thead class="th-red">
+                                        <tr class="row100 head">
+                                            <th class="cell100 column1">Agent</th>
+                                            <th class="cell100 column2">Billing Period</th>
+                                            <th class="cell100 column3">Amount Due</th>
+                                            <th class="cell100 column4">Payment Status</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+
+                            <div class="table100-body js-pscroll">
+                                <table id="bill-table">
+                                    <tbody>
+                                        {% for bill in data.bills %}
+                                        <tr class="row100 body">
+                                            <td class="cell100 column1 onhover"><a
+                                                    href="/bill/view/{{bill.id}}">{{bill.agent.name}}</a>
+                                            </td>
+                                            <td class="cell100 column2">{{bill.start_date}} - {{bill.end_date}}
+                                            </td>
+                                            <td class="cell100 column3">&#8377; {{bill.grand_total}}</td>
+                                            {% if bill.is_paid == True %}
+                                            <td class="cell100 column4"><span class="dot green-dot"></span>&nbsp
+                                                Completed</td>
+                                            {% else %}
+                                            <td class="cell100 column4"><span class="dot orange-dot"></span>&nbsp
+                                                Pending</td>
+                                            {% endif %}
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <br>
+                        <div class="p-1 bg-light rounded rounded-pill shadow-sm mb-4">
+                            <div class="input-group">
+                                <input id="searchCustomer" type="search" placeholder="Search in customers..."
+                                    aria-describedby="button-addon1" class="form-control border-0 bg-light">
+                                <div class="input-group-append">
+                                    <button id="button-addon1" type="submit" class="btn btn-link text-primary"><i
+                                            class="fa fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table100 ver2 m-b-110">
+                            <div class="table100-head">
+                                <table>
+                                    <thead class="th-red">
+                                        <tr class="row100 head">
+                                            <th class="cell100 column1">Customer</th>
+                                            <th class="cell100 column2">Billing Period</th>
+                                            <th class="cell100 column3">Amount Due</th>
+                                            <th class="cell100 column4">Payment Status</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+
+                            <div class="table100-body js-pscroll">
+                                <table id="invoice-table">
+                                    <tbody>
+                                        {% for invoice in data.invoices %}
+                                        <tr class="row100 body">
+                                            <td class="cell100 column1 onhover"><a
+                                                    href="/invoice/view/{{invoice.id}}">{{invoice.customer.name}}</a>
+                                            </td>
+                                            <td class="cell100 column2">{{invoice.start_date}} - {{invoice.end_date}}
+                                            </td>
+                                            <td class="cell100 column3">&#8377; {{invoice.grand_total}}</td>
+                                            {% if invoice.is_paid == True %}
+                                            <td class="cell100 column4"><span class="dot green-dot"></span>&nbsp
+                                                Completed</td>
+                                            {% else %}
+                                            <td class="cell100 column4"><span class="dot orange-dot"></span>&nbsp
+                                                Pending</td>
+                                            {% endif %}
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    <div class="col-12 col-md-5">
+                        <div class="table100 ver2 m-b-110">
+                            <div class="table100-head">
+                                <table>
+                                    <thead class="th-purple">
+                                        <tr class="row100 head">
+                                            <th class="cell100 column1">Name</th>
+                                            <th class="cell100 column2">Language</th>
+                                            <th class="cell100 column3">Category</th>
+                                            <th class="cell100 column4">Price</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+
+                            <div class="table100-body js-pscroll">
+                                <table>
+                                    <tbody>
+                                        {% for product in data.products %}
+                                        <tr class="row100 body">
+                                            <td class="cell100 column1">{{product.name}}</td>
+                                            <td class="cell100 column2">{{product.language}}</td>
+                                            <td class="cell100 column3">{{product.category}}</td>
+                                            <td class="cell100 column4">&#8377; {{product.price}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- <div class="card">
+                            <h2>Send Bills by SMS</h2>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="{% static 'vendor/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
+
+<script type="text/javascript">
+    document.title = "Dashboard - M/S Sarmah Brothers"
+    var $billRows = $('#bill-table tr')
+    var $invoiceRows = $('#invoice-table tr');
+
+
+    $('#searchAgent').keyup(debounce(function () {
+
+        var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
+            reg = RegExp(val, 'i'),
+            text;
+
+        $billRows.show().filter(function () {
+            text = $(this).text().replace(/\s+/g, ' ');
+            return !reg.test(text);
+        }).hide();
+    }, 300));
+
+    $('#searchCustomer').keyup(debounce(function () {
+
+        var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
+            reg = RegExp(val, 'i'),
+            text;
+
+        $invoiceRows.show().filter(function () {
+            text = $(this).text().replace(/\s+/g, ' ');
+            return !reg.test(text);
+        }).hide();
+    }, 300));
+
+
+    $('.js-pscroll').each(function () {
+        var ps = new PerfectScrollbar(this);
+
+        $(window).on('resize', function () {
+            ps.update();
+        })
+    });
+
+    $(document).ready(function () {
+
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+
+    });
+
+    // Returns a function, that, as long as it continues to be invoked, will not
+    // be triggered. The function will be called after it stops being called for
+    // N milliseconds. If `immediate` is passed, trigger the function on the
+    // leading edge, instead of the trailing.
+    function debounce(func, wait, immediate) {
+        var timeout;
+        return function () {
+            var context = this, args = arguments;
+            var later = function () {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+    };
+</script>
+{% endblock %}

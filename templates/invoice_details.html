@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'CSS/invoice.css' %}">
+<header class="clearfix" style="margin-bottom: 0;">
+
+    <button class="btn-outline-primary btn-sm noprint" onClick="window.print()"><strong>PRINT</strong></button>
+    <button class="btn-outline-warning btn-sm noprint" onClick="window.location= '#'"><strong>EDIT
+            (N/A)</strong></button>
+    <button class="btn-outline-danger btn-sm noprint" id="deleteButton"><strong>DELETE</strong></button>
+
+    <br>
+    <br>
+    {% if data.customer_type == "Agent" %}
+    <h1>AGENT MONTHLY BILL</h1>
+    {% else %}
+    <h1>CUSTOMER INVOICE</h1>
+    {% endif%}
+    <div id="company" class="clearfix">
+        <div>M/S Sarmah Brothers</div>
+        <div>K.P.M. Hall Chari-ali,<br /> Sivasagar, Assam - 785640</div>
+        <div>03772-223150 / 7002031503</div>
+        <div><a href="mailto:sarmahbrothers@gmail.com">sarmahbrothers@gmail.com</a></div>
+        <div><a href="mailto:biditdevsarmah05@gmail.com">biditdevsarmah05@gmail.com</a></div>
+    </div>
+    <div id="project">
+        {% if data.customer_type == "Agent" %}
+            <div><span>BILL ID</span> {{data.invoice.id|stringformat:"06d"}}</div>
+            <div><span>AGENT ID</span> {{data.customer.id}}</div>
+        {% else %}
+            <div><span>INVOICE ID</span> {{data.invoice.id|stringformat:"06d"}}</div>
+            <div><span>CUSTOMER ID</span> {{data.customer.id}}</div>
+        {% endif %}
+        <div><span>NAME</span> {{ data.customer.name }}</div>
+        <div><span>ADDRESS</span> {{ data.customer.address }}</div>
+        <div><span>CONTACT</span> {{ data.customer.contact }}</div>
+        <div><span>BILLING DATE</span> {{ data.invoice.create_date }}</div>
+        <div><span>BILLING PERIOD</span> {{data.invoice.start_date}} - {{data.invoice.end_date}}</div>
+    </div>
+</header>
+<hr>
+        <p id="desc">
+            AGENT:- All kinds of News Papers, Magazines & G.I.C/Book Seller, School & Office Stationary suppliers.<br>
+            ADVERTISING AGENT of All leading newspapers in Assam & India (National Paper)/XEROX/Print Out/DTP Facility also available here.
+        </p>
+<hr>
+<main>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 10%;" class="service">SL NO.</th>
+                <th class="desc">PAPER/MAGAZINE</th>
+                <th>PRICE</th>
+                <th>QTY</th>
+                <th>TOTAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order_detail in data.order_details %}
+            <tr>
+                <td class="service">{{ forloop.counter }}</td>
+                <td class="desc">{{ order_detail.product }}</td>
+                <td class="unit"><span>&#8377;</span> {{order_detail.price}}</td>
+                <td class="qty">{{order_detail.quantity}}</td>
+                <td class="total">&#8377; {{order_detail.net_price}}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td style="text-align: right;" colspan="4">SUBTOTAL</td>
+                <td class="total">&#8377; {{data.invoice.sub_total}}</td>
+            </tr>
+            {% if data.customer_type == "Agent" %}
+            <tr>
+                <td style="text-align: right;" colspan="4">COMMISSION @ {{data.customer.commission}}%</td>
+                <td class="total">&#8377; {{data.invoice.deductions}}</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;" colspan="4">NET TOTAL</td>
+                <td class="total">&#8377; {{data.invoice.net_total}}</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;" colspan="4">PREVIOUS BALANCE</td>
+                <td class="total">&#8377; {{data.invoice.prev_balance}}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td style="text-align: right;" colspan="4">HAWKER CHARGES</td>
+                <td class="total">&#8377; {{data.invoice.additional_charges}}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td style="text-align: right;" colspan="4" class="grand total">GRAND TOTAL</td>
+                <td class="grand total">&#8377; {{data.invoice.grand_total}}</td>
+            </tr>
+        </tbody>
+    </table>
+    Payment Status: <select class="btn-sm" id="paymentStatus" name="payment_status">
+        {% if data.invoice.is_paid == True%}
+        <option value="Pending">Pending</option>
+        <option selected value="Completed">Completed</option>
+        {% else %}
+        <option selected value="Pending">Pending</option>
+        <option value="Completed">Completed</option>
+        {% endif %}
+    </select> &nbsp;&nbsp;
+    <button id="myButton" class="btn-outline-success btn-sm noprint">Save Changes</button>
+    <!-- <div id="notices">
+        <div>NOTICE:</div>
+        <div class="notice">A finance charge of 1.5% will be made on unpaid balances after 30 days.</div>
+    </div> -->
+</main>
+<footer>
+    Invoice was created on a computer and is valid without the signature and seal.
+</footer>
+
+<script type="text/javascript">
+    var invoice_id = '{{ data.invoice.id }}'
+    if ('{{data.customer_type}}' == "Agent") {
+        document.title = "Bill-" + invoice_id + '-{{data.customer.name}}';
+        invoice_type = "Agent Bill"
+        delete_url = "/bill/delete/" + invoice_id
+    } else {
+        document.title = "Invoice-" + invoice_id + ':{{data.customer.name}}';
+        invoice_type = "Customer Invoice"
+        delete_url = "/invoice/delete/" + invoice_id
+    }
+
+
+    $("#deleteButton").click(function (e) {
+        e.preventDefault()
+        if (confirm("Are you sure you want to delete this " + invoice_type + "?") == true) {
+            console.log("Deleting" + invoice_type + "...")
+            //make the AJAX request, dataType is set to json i.e. we are expecting JSON data in response from the server
+            $.ajax({
+                type: "POST",
+                url: delete_url,
+                contentType: "application/json",
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+
+                //if received a response from the server
+                success: function (response) {
+                    alert(invoice_type + " Successfully Deleted!")
+                    window.location = '/';
+                },
+            });
+        }
+    })
+
+    //checks for the button click event
+    $("#myButton").click(function (e) {
+        e.preventDefault()
+        console.log('{{ csrf_token }}')
+        console.log("HERE")
+        //get the form data and put into a var
+        var json_data = {
+            payment_status: $("#paymentStatus").val(),
+            invoice_id: '{{ data.invoice.id }}',
+            customer_type: '{{data.customer_type}}',
+        }
+        console.log("JSON DATA: ", JSON.stringify(json_data))
+        //make the AJAX request, dataType is set to json i.e. we are expecting JSON data in response from the server
+        $.ajax({
+            type: "POST",
+            url: "/update_payment_status",
+            contentType: "application/json",
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            data: JSON.stringify(json_data),
+            dataType: "json",
+
+            //if received a response from the server
+            success: function (response) {
+                if (response.status == "ok") {
+                    alert("Payment Status Succesfully Changed to " + json_data.payment_status)
+                    window.location = '/';
+                }
+            },
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,325 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'CSS/invoice.css' %}">
+
+
+<header class="clearfix">
+    {% if data.customer_type == "Agent" %}
+    <h1>AGENT MONTHLY BILL</h1>
+    {% else %}
+    <h1>CUSTOMER INVOICE</h1>
+    {% endif%}
+    <div id="company" class="clearfix">
+        <div>M/S Sarmah Brothers</div>
+        <div>K.P.M. Hall Chari-ali,<br /> Sivasagar, Assam - 785640</div>
+        <div>03772-223150 / 7002031503</div>
+        <div><a href="mailto:sarmahbrothers@gmail.com">sarmahbrothers@gmail.com</a></div>
+    </div>
+    <form method="POST">
+        <div id="project" style="font-weight: bolder;">
+            <div><span>INVOICE ID</span> XXXXX</div>
+            <div><span>NAME</span> <select id="customer" name="name" required>
+                    <option hidden disabled selected value> -- Select Name -- </option>
+                    {% for customer in data.customers %}
+                    <option value='{{customer.id}}'>{{customer}}</option>
+                    {% endfor %}
+                </select></div>
+            <div><span>BILLING DATE</span> {{data.date_today}}</div>
+            <div><span style="float: left; margin-top: 3px">BILLING FROM</span>
+                <input style="float: left; cursor:text" id="startDate" type="date" , name="startDate" required>
+            </div>
+            <div><span style="float: left; margin-top: 3px">BILLING TO</span>
+                <input style="float: left; cursor:text" id="endDate" type="date" , name="endDate" required>
+            </div>
+        </div>
+</header>
+<main>
+    <button id="addItem" class="btn-primary btn-sm">Add Paper/Magazine</button>
+    {% if data.customer_type == "Customer" %}
+    <button id="autoGenerate" class="btn-dark btn-sm">Autogenerate Invoice</button>
+    {% endif %}
+    <br><br>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 10%;" class="service">SL NO.</th>
+                <th class="desc">PAPER/MAGAZINE</th>
+                <th>PRICE</th>
+                <th>QTY</th>
+                <th>TOTAL</th>
+            </tr>
+        </thead>
+        <tbody id="itemList">
+
+        </tbody>
+        <tbody>
+            <tr>
+                <td style="text-align: right;" colspan="4">SUBTOTAL</td>
+                <td class="total" id="subTotal">&#8377; {{data.invoice.sub_total}}</td>
+            </tr>
+            {% if data.customer_type == "Agent" %}
+            <tr>
+                <td id="commissionRate" style="text-align: right;" colspan="4">COMMISSION</td>
+                <div style="width: 100%;">
+                    <td class="total">
+                        <span style="width: 50%; float:left; text-align: right" id="deduction">&#8377;&nbsp;</span>
+                    </td>
+                </div>
+            </tr>
+            <tr>
+                <td style="text-align: right;" colspan="4" class="grand total">NET TOTAL</td>
+                <td class="grand total" id="netTotal">&#8377; {{data.invoice.total}}</td>
+            </tr>
+            <tr>
+                <td style="text-align: right;" colspan="4" class="grand total">PREVIOUS BALANCE</td>
+                <td class="grand total" id="prevBalance">
+                    <span style="width: 50%; float:left; text-align: right">&#8377;&nbsp;</span>
+                    <input style="width: 50%; margin-left: 50%;" id='prevBal' type='number' placeholder='' required />
+
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td style="text-align: right;" colspan="4">HAWKER CHARGES</td>
+                <div style="width: 100%;">
+                    <td class="total">
+                        <span style="width: 50%; float:left; text-align: right">&#8377;&nbsp;</span>
+                        <input style=" width:50%; float: left;" id="addCharge" type="number" , name="addCharges" min="0"
+                            required step=".01">
+                    </td>
+                </div>
+            </tr>
+            {% endif %}
+            <tr>
+                <td style="text-align: right;" colspan="4" class="grand total">GRAND TOTAL</td>
+                <td class="grand total" id="grandTotal">&#8377; {{data.invoice.total}}</td>
+            </tr>
+        </tbody>
+    </table>
+    {% if data.customer_type == "Agent" %}
+    <button id="billButton" class="btn-success btn-sm">Create Bill</button>
+    {% else %}
+    <button id="invoiceButton" class="btn-success btn-sm">Create Invoice</button>
+    {% endif %}
+</main>
+</form>
+
+
+<script type="text/javascript">
+    var n_count = 1;
+    var commission = 0;
+    var allProducts = JSON.parse('{{data.price_dict | safe}}')
+    if ("{{data.customer_type}}" == "Agent") {
+        var allCommissions = JSON.parse('{{data.commission_dict | safe}}')
+        document.title = "Create Agent Bill"
+    }
+    else {
+        document.title = "Create Customer Invoice"
+    }
+
+
+    $(document).on("change", "#customer", function () {
+        if ("{{data.customer_type}}" == "Agent") {
+            customer_id = $('#customer').val()
+            commission = allCommissions[customer_id]
+            $('#commissionRate').text("COMMISSION @" + commission + "%")
+            calculateTotals()
+        }
+    })
+
+    $("#addItem").click(function (e) {
+        e.preventDefault();
+        console.log("{{data.products}}")
+
+        html_code = `
+        <tr id=`+ n_count + `>
+            <td class="service">` + n_count + `</td>
+            <td class="desc">
+                <select class='product' required> 
+                    <option hidden disabled selected value> -- Select a Paper/Magazine -- </option>
+                    {% for product in data.products %} 
+                    <option value='{{product.id}}' data-price='{{product.price}}'>{{product}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td class="unit"></td>
+            <td style="text-align: center;">
+                <input class='quantity' type='number' style='text-align:center' placeholder='QTY' required/>
+            </td>
+            <td class="total unitTotal"></td>
+        </tr>`
+
+        $(html_code).appendTo("#itemList").append()
+        n_count += 1;
+    });
+
+    $('#autoGenerate').click(function (e) {
+        e.preventDefault()
+        console.log("Trying to autogenerate Invoice...")
+        if ($('#customer').val() != null) {
+            let quantity = window.prompt("Enter quantity of each paper/magazine: ");
+            $('#itemList').empty()
+            n_count = 1
+            if (quantity != null) {
+                $.ajax({
+                    type: "POST",
+                    url: "invoice/autogenerate/" + $('#customer').val(),
+                    contentType: "application/json",
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                    dataType: "json",
+
+                    //if received a response from the server
+                    success: function (response) {
+                        products = response.products
+                        add_charges = response.hawker_charges
+                        products.map(function (product, index) {
+                            $('#addItem').click()
+                            let sl_no = n_count - 1
+                            $('#' + sl_no + ' .product').val(product).trigger("change");
+                            $('#' + sl_no + ' .quantity').val(quantity).trigger("change")
+                            $('#addCharge').val(add_charges).trigger("change")
+                        })
+                    },
+                });
+            }
+        } else {
+            alert("Please select a customer to autogenerate invoice for.")
+        }
+    });
+
+    $(document).on("change", ".product", function () {
+        var slNo = $(this).closest("tr").attr("id")
+        var productID = $('#' + slNo + ' .product').val()
+        $('#' + slNo + ' .unit').text("\u20B9 " + allProducts[productID])
+        calculateTotals()
+    })
+
+    $(document).on("change", ".quantity", function () {
+        let slNo = $(this).closest("tr").attr("id")
+        let unitPrice = $('#' + slNo + ' .unit').text().split("\u20B9 ")[1]
+        let quantity = $('#' + slNo + ' .quantity').val()
+        $('#' + slNo + ' .unitTotal').text("\u20B9 " + parseFloat(unitPrice) * quantity)
+        let totals = $('.unitTotal').text()
+        calculateTotals()
+        console.log("TOTALS: ", totals)
+    })
+
+    $(document).on("change", "#addCharge, #prevBal", function () {
+        calculateTotals()
+    })
+
+    function calculateTotals() {
+        console.log("CALCULATING..")
+        let totals = $('.unitTotal').text()
+        totals = totals.split("\u20B9 ").slice(1)
+        let subTotal = totals.reduce((a, n) => (a + Number(n)), 0);
+        let addCharges = 0
+        let prevBalance = 0
+        if ("{{data.customer_type}}" == "Agent") {
+            addCharges = - subTotal * commission / 100
+            prevBalance = $('#prevBal').val()
+        }
+        else {
+            addCharges = $('#addCharge').val()
+        }
+        let grandTotal = Number(addCharges) + Number(subTotal) + Number(prevBalance)
+
+        $('#netTotal').text("\u20B9 " + (Number(grandTotal) - Number(prevBalance)).toFixed(2))
+        $('#deduction').text("\u20B9 " + - Number(addCharges).toFixed(2))
+        $('#subTotal').text("\u20B9 " + subTotal.toFixed(2))
+        $('#grandTotal').text("\u20B9 " + grandTotal.toFixed(2))
+    }
+
+    function checkFormValidation() {
+        var required = $('input,textarea,select').filter('[required]:visible');
+        var allRequired = true;
+        required.each(function () {
+            if ($(this).val() == '') {
+                allRequired = false;
+            }
+        });
+
+        if (!allRequired) {
+            return false
+        }
+        else {
+            return true
+        }
+    }
+
+    //checks for the button click event
+    $("#billButton").click(function (e) {
+        e.preventDefault()
+        isValid = checkFormValidation()
+        if (isValid == false) {
+            alert("Please fill in all the necessary fields before submitting!")
+        } else {
+            console.log('{{ csrf_token }}')
+            //get the form data and put into a var
+            var order_data = {
+                agent: $("#customer").val(),
+                startDate: $("#startDate").val(),
+                endDate: $("#endDate").val(),
+                products: $('.product').map((_, el) => el.value).get(),
+                quantities: $('.quantity').map((_, el) => el.value).get(),
+                deductions: $('#deduction').text().split("\u20B9 ")[1],
+                prevBalance: $('#prevBal').val()
+            }
+            console.log("JSON DATA: ", JSON.stringify(order_data))
+            //make the AJAX request, dataType is set to json i.e. we are expecting JSON data in response from the server
+            $.ajax({
+                type: "POST",
+                url: "/create_bill",
+                contentType: "application/json",
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                data: JSON.stringify(order_data),
+
+                //if received a response from the server
+                success: function (response) {
+                    console.log(response)
+                    alert("Bill Successfully Created")
+                    window.location = '/';
+                },
+            });
+        }
+    });
+
+    //checks for the button click event
+    $("#invoiceButton").click(function (e) {
+        e.preventDefault()
+        isValid = checkFormValidation()
+        if (isValid == false) {
+            alert("Please fill in all the necessary fields before submitting!")
+        } else {
+            console.log('{{ csrf_token }}')
+            //get the form data and put into a var
+            var order_data = {
+                customer: $("#customer").val(),
+                startDate: $("#startDate").val(),
+                endDate: $("#endDate").val(),
+                products: $('.product').map((_, el) => el.value).get(),
+                quantities: $('.quantity').map((_, el) => el.value).get(),
+                addCharge: $("#addCharge").val(),
+            }
+            console.log("JSON DATA: ", JSON.stringify(order_data))
+            //make the AJAX request, dataType is set to json i.e. we are expecting JSON data in response from the server
+            $.ajax({
+                type: "POST",
+                url: "/create_invoice",
+                contentType: "application/json",
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                data: JSON.stringify(order_data),
+
+                //if received a response from the server
+                success: function (response) {
+                    console.log(response)
+                    alert("Invoice Successfully Created")
+                    window.location = '/';
+                },
+            });
+        }
+    });
+</script>
+{% endblock %}

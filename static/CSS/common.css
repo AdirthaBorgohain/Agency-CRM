@@ -1,0 +1,123 @@
+body {
+  background: #F0EFF5 !important;
+  font-family: "Source Sans Pro", sans-serif !important;
+}
+
+.tripletRow button {
+  color: white;
+  width: 100%;
+  height: 130px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  /* transition: 0.3s; */
+  border-radius: 0.7rem;
+  transition: transform 0.3s; /* Animation */
+}
+
+.tripletRow button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+.tripletRow i {
+  margin-bottom: 3%;
+  font-size: 1.7rem;
+}
+
+.card {
+  padding: 5%;
+  margin-top: 5%;
+  /* Add shadows to create the "card" effect */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2) !important;
+  transition: 0.3s !important;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Add some padding inside the card container */
+.container {
+  padding: 2px 16px !important;
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.orange-dot {
+  background-color: rgb(230, 138, 0);
+}
+
+.green-dot {
+  background-color: rgb(56, 141, 23);
+}
+
+/* Search Bar */
+.form-control:focus {
+  box-shadow: none;
+  outline: 0;
+}
+
+.form-control-underlined {
+  border-width: 0;
+  border-bottom-width: 1px;
+  border-radius: 0;
+  padding-left: 0;
+}
+
+.form-control::placeholder {
+  font-size: 0.95rem;
+  color: rgb(49, 49, 49);
+  font-style: italic;
+}
+
+/* .rounded-pill {
+  transition: transform 0.3s;
+}
+
+.rounded-pill:hover {
+  transform: scale(1.05);
+} */
+
+.customer-container {
+  /* width:100px; */
+  max-height: 62%;
+  overflow-y: auto;
+}
+
+#customer-cards .card:hover,
+#agent-cards .card:hover {
+  transform: scale(1.02) !important;
+}
+
+
+.customer-create-form input {
+  width: 250px;
+}
+
+.customer-create-form textarea {
+  border: none;
+}
+
+@media only screen and (max-device-width: 480px) {
+  .tripletRow button {
+    font-size: small;
+    /* height: 250%; */
+  }
+
+  .tripletRow div {
+    margin-bottom: 45px;
+  }
+
+  .col-md-5 {
+    margin-top: 20px;
+  }
+
+  .column1 {
+    padding-left: 20px !important;
+  }
+}

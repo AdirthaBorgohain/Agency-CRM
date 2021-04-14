@@ -1,0 +1,45 @@
+.details-card {
+    font-size: 18px;
+    color: black;
+}
+
+.details-card input, .details-card textarea {
+    border: none;
+    width: 60%;
+    margin-bottom: 18px;
+    outline-style: solid;
+    outline-width: thin;
+    outline-color: darkgray !important;
+}
+
+.details-card input:disabled, .details-card textarea:disabled {
+    color: rgb(99, 98, 98);
+    background-color: rgb(239 241 245);
+    outline: none;
+}
+
+.details-card input:focus, .details-card textarea:focus{
+    outline: auto
+}
+
+button {
+    font-weight: bold;
+}
+
+@media only screen and (max-device-width: 480px) {
+    #content {
+        font-size: 14px !important;
+    }
+
+    input, textarea {
+    width: 100%;
+    }
+
+    .card {
+        background: #fff !important;
+    }
+
+    button{
+        font-size: 12px !important;
+    }
+}

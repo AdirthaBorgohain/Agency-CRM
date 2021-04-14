@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Add Agent/Customer</h1>
+    <div class="row">
+        <div class="d-flex justify-content-center">
+            <!-- <h1>Create Customer</h1> -->
+            <br><br>
+
+            <form class="customer-create-form">
+                Full Name: <input id="name" type="text"  name="name" required><br>
+                Address: <textarea id="address" name="address" required rows="4" cols="27"></textarea><br>
+                Contact: <input id="contact" type="text" maxlength="10" name="contact" required><br>
+                Type: <select id="customerType" name="customer_type" required>
+                    <option value="Agent">Agent</option>
+                    <option value="Customer">Customer</option>
+                </select><br><br>
+                Customer/Agent ID: <input id="customerID" type="text" maxlength="8" name="customerID" required><br>
+                <div id="commissionDiv" style="display: block;">
+                    Commission Rate (%): <input id="commission" type="number" , name="commission"><br>
+                </div>
+                <hr>
+                <button class="btn-success btn-sm" id="myButton">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    document.title = "Add New Customer/Agent"
+
+    $(document).on("change", '#customerType', function () {
+        let customer_type = $(this).val()
+        if (customer_type == "Customer") {
+            $('#commissionDiv').css('display', 'none')
+        }
+        else if (customer_type == "Agent") {
+            $('#commissionDiv').css('display', 'block')
+        }
+        console.log("VALUE: ", customer_type)
+    })
+
+    //checks for the button click event
+    $("#myButton").click(function (e) {
+        e.preventDefault()
+        isValid = checkFormValidation()
+        if (isValid == false) {
+            alert("Please fill in all the necessary fields before submitting!")
+        } else {
+            console.log('{{ csrf_token }}')
+            //get the form data and put into a var
+            var text_data = {
+                customer_id: $("#customerID").val(),
+                name: $("#name").val(),
+                address: $("#address").val(),
+                contact: $("#contact").val(),
+                customer_type: $("#customerType").val(),
+                commission: $("#commission").val()
+            }
+            console.log("JSON DATA: ", JSON.stringify(text_data))
+            //make the AJAX request, dataType is set to json i.e. we are expecting JSON data in response from the server
+            $.ajax({
+                type: "POST",
+                url: "/add_customer",
+                contentType: "application/json",
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                data: JSON.stringify(text_data),
+                dataType: "json",
+
+                //if received a response from the server
+                success: function (response) {
+                    console.log(response)
+                    alert("New " + customer_type + " Successfully Added")
+                },
+
+                error: function (response) {
+                    alert("ERROR! " + customer_type + " probably already exists in database")
+                }
+            });
+        }
+    });
+
+    function checkFormValidation() {
+        var required = $('input,textarea,select').filter('[required]:visible');
+        var allRequired = true;
+        required.each(function () {
+            if ($(this).val() == '') {
+                allRequired = false;
+            }
+        });
+
+        if (!allRequired) {
+            return false
+        }
+        else {
+            return true
+        }
+    }
+</script>
+
+{% endblock %}

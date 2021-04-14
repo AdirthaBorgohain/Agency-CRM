@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'CSS/login.css' %}">
+
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <!-- Login Form -->
+        <form action="login" method="post">
+            <input type='text' id='next' name='next' style="display:none !important; " value="{{next}}">
+            {% csrf_token %}
+            <br>
+            <input type="text" id="login" class="fadeIn second" name="username" placeholder="username">
+            <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
+            <br><br>
+            <input type="submit" class="fadeIn fourth" value="Log In">
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}>

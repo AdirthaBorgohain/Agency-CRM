@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="wrapper">
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <h3>Admin Dashboard</h3>
+            <hr>
+            <h4>Hello, <strong>{{user.username}}</strong></h4>
+        </div>
+
+        <ul class="list-unstyled components">
+            <p>M/S Sarmah Brothers</p>
+            <li>
+                <a href="/dashboard/home">Home</a>
+            </li>
+            <li>
+                <a href="analytics">Analytics</a>
+            </li>
+            <li class="active">
+                <a href="customers">Customers and Agents</a>
+            </li>
+            <hr>
+            <li>
+                <a href="/logout">Logout</a>
+            </li>
+        </ul>
+    </nav>
+    <div id="content" style="width: 100%">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="btn">
+                    <i class="fab fa-elementor"></i>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+        <!-- <h2>&nbsp;&nbsp;&nbsp;Customers and Agents (WIP)</h2> -->
+        <div class="container customer-container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="card"
+                        style="background-image: url('../static/images/customers.jpg'); background-position: right;">
+                        <h2> <strong>Agents</strong></h2>
+                    </div>
+                </div>
+                <div class="col-lg-8" style="margin-top: 43px;">
+                    <div class="p-1 bg-light rounded rounded-pill shadow-sm mb-4">
+                        <div class="input-group">
+                            <input id="searchAgent" type="search" placeholder="Search Agents..."
+                                aria-describedby="button-addon1" class="form-control border-0 bg-light">
+                            <div class="input-group-append">
+                                <button id="button-addon1" type="submit" class="btn btn-link text-primary"><i
+                                        class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="agent-cards">
+                {% for agent in data.agents %}
+                <div class="col-lg-4">
+                    <div class="card agent-card" style="cursor: pointer;">
+                        <a href="/agent/view/{{ agent.id }}">
+                            <div>
+                                <span><strong>AGENT ID:</strong> {{ agent.id }}</span><br>
+                                <span><strong>NAME:</strong> {{ agent.name }}</span><br>
+                                <span><strong>ADDRESS:</strong> {{ agent.address }}</span><br>
+                                <span><strong>CONTACT:</strong> {{ agent.contact }}</span><br>
+                                <span><strong>COMMISSION RATE:</strong> {{ agent.commission }}%</span><br>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <div class="container customer-container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="card"
+                        style="background-image: url('/static/images/customers.jpg'); background-position: right;">
+                        <h2> <strong>Customers</strong></h2>
+                    </div>
+                </div>
+                <div class="col-lg-8" style="margin-top: 43px;">
+                    <div class="p-1 bg-light rounded rounded-pill shadow-sm mb-4">
+                        <div class="input-group">
+                            <input id="searchCustomer" type="search" placeholder="Search Customers..."
+                                aria-describedby="button-addon1" class="form-control border-0 bg-light">
+                            <div class="input-group-append">
+                                <button id="button-addon1" type="submit" class="btn btn-link text-primary"><i
+                                        class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="customer-cards">
+                {% for customer in data.customers %}
+                <div class="col-lg-4">
+                    <div class="card" style="cursor: pointer;">
+                        <a href="/customer/view/{{customer.id}}">
+                            <div>
+                                <span><strong>CUSTOMER ID:</strong> {{ customer.id }}</span><br>
+                                <span><strong>NAME:</strong> {{ customer.name }}</span><br>
+                                <span><strong>ADDRESS:</strong> {{ customer.address }}</span><br>
+                                <span><strong>CONTACT:</strong> {{ customer.contact }}</span><br>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.title = "Customers and Agents"
+
+    var $agentCards = $('#agent-cards div')
+    var $customerCards = $('#customer-cards div');
+
+    $('#searchAgent').keyup(debounce(function () {
+
+        var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
+            reg = RegExp(val, 'i'),
+            text;
+
+        $agentCards.show().filter(function () {
+            text = $(this).text().replace(/\s+/g, ' ');
+            return !reg.test(text);
+        }).hide();
+    }, 300));
+
+    $('#searchCustomer').keyup(debounce(function () {
+
+        var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
+            reg = RegExp(val, 'i'),
+            text;
+
+        $customerCards.show().filter(function () {
+            text = $(this).text().replace(/\s+/g, ' ');
+            return !reg.test(text);
+        }).hide();
+    }, 300));
+
+
+
+    $('.js-pscroll').each(function () {
+        var ps = new PerfectScrollbar(this);
+
+        $(window).on('resize', function () {
+            ps.update();
+        })
+    });
+
+    $(document).ready(function () {
+
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+
+    });
+
+
+    // Returns a function, that, as long as it continues to be invoked, will not
+    // be triggered. The function will be called after it stops being called for
+    // N milliseconds. If `immediate` is passed, trigger the function on the
+    // leading edge, instead of the trailing.
+    function debounce(func, wait, immediate) {
+        var timeout;
+        return function () {
+            var context = this, args = arguments;
+            var later = function () {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+    };
+</script>
+{% endblock %}

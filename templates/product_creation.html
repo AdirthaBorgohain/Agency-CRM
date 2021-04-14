@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Add new Paper/Magazine</h1>
+
+    <div class="row">
+        <div class="d-flex justify-content-center">
+            <br><br>
+            <form method="POST">
+
+                Name of Paper/Magazine: <input id="name" type="text" name="name"><br>
+                Language: <select id="language" name="language">
+                    <option value="Assamese">Assamese</option>
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Bengali">Bengali</option>
+                    <option value="Others">Others</option>
+                </select><br><br>
+                Price (&#8377;): <input id="price" type="number" , name="price" min="0" value="0" step=".01"><br>
+                Category:<select id="category" name="category">
+                    <option value="Newspaper">Newspaper</option>
+                    <option value="Magazine">Magazine</option>
+                </select><br>
+                <!-- <p>Total Amount: {{totalAmount}}</p> -->
+                <hr>
+                <button class="btn-success btn-sm" id="myButton">Submit</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    document.title = "Add New Paper/Magazine"
+
+    //checks for the button click event
+    $("#myButton").click(function (e) {
+        e.preventDefault()
+        console.log('{{ csrf_token }}')
+        console.log("HERE")
+        //get the form data and put into a var
+        var product_data = {
+            name: $("#name").val(),
+            language: $("#language").val(),
+            price: $("#price").val(),
+            category: $("#category").val(),
+        }
+        console.log("JSON DATA: ", JSON.stringify(product_data))
+        //make the AJAX request, dataType is set to json i.e. we are expecting JSON data in response from the server
+        $.ajax({
+            type: "POST",
+            url: "/add_product",
+            contentType: "application/json",
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            data: JSON.stringify(product_data),
+
+            //if received a response from the server
+            success: function (response) {
+                console.log(response)
+                alert("New Paper/Magazine Successfully Added")
+                window.location = '/';
+            },
+        });
+    });
+</script>
+{% endblock %}
