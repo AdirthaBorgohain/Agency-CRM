@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load humanize %}
 {% block content %}
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'CSS/invoice.css' %}">
@@ -57,7 +56,7 @@
         <tbody>
             <tr>
                 <td style="text-align: right;" colspan="4">SUBTOTAL</td>
-                <td class="total" id="subTotal">&#8377; {{data.invoice.sub_total|intcomma}}</td>
+                <td class="total" id="subTotal">&#8377; {{data.invoice.sub_total}}</td>
             </tr>
             {% if data.customer_type == "Agent" %}
             <tr>
@@ -94,7 +93,7 @@
             {% endif %}
             <tr>
                 <td style="text-align: right;" colspan="4" class="grand total">GRAND TOTAL</td>
-                <td class="grand total" id="grandTotal">&#8377; {{data.invoice.total|intcomma}}</td>
+                <td class="grand total" id="grandTotal">&#8377; {{data.invoice.total}}</td>
             </tr>
         </tbody>
     </table>

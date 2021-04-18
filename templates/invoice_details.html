@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load humanize %}
 {% block content %}
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'CSS/invoice.css' %}">
@@ -63,35 +62,35 @@
                 <td class="desc">{{ order_detail.product }}</td>
                 <td class="unit"><span>&#8377;</span> {{order_detail.price}}</td>
                 <td class="qty">{{order_detail.quantity}}</td>
-                <td class="total">&#8377; {{order_detail.net_price|intcomma}}</td>
+                <td class="total">&#8377; {{order_detail.net_price}}</td>
             </tr>
             {% endfor %}
             <tr>
                 <td style="text-align: right;" colspan="4">SUBTOTAL</td>
-                <td class="total">&#8377; {{data.invoice.sub_total|intcomma}}</td>
+                <td class="total">&#8377; {{data.invoice.sub_total}}</td>
             </tr>
             {% if data.customer_type == "Agent" %}
             <tr>
                 <td style="text-align: right;" colspan="4">COMMISSION @ {{data.customer.commission}}%</td>
-                <td class="total">&#8377; {{data.invoice.deductions|intcomma}}</td>
+                <td class="total">&#8377; {{data.invoice.deductions}}</td>
             </tr>
             <tr>
                 <td style="text-align: right;" colspan="4">NET TOTAL</td>
-                <td class="total">&#8377; {{data.invoice.net_total|intcomma}}</td>
+                <td class="total">&#8377; {{data.invoice.net_total}}</td>
             </tr>
             <tr>
                 <td style="text-align: right;" colspan="4">PREVIOUS BALANCE</td>
-                <td class="total">&#8377; {{data.invoice.prev_balance|intcomma}}</td>
+                <td class="total">&#8377; {{data.invoice.prev_balance}}</td>
             </tr>
             {% else %}
             <tr>
                 <td style="text-align: right;" colspan="4">HAWKER CHARGES</td>
-                <td class="total">&#8377; {{data.invoice.additional_charges|intcomma}}</td>
+                <td class="total">&#8377; {{data.invoice.additional_charges}}</td>
             </tr>
             {% endif %}
             <tr>
                 <td style="text-align: right;" colspan="4" class="grand total">GRAND TOTAL</td>
-                <td class="grand total">&#8377; {{data.invoice.grand_total|intcomma}}</td>
+                <td class="grand total">&#8377; {{data.invoice.grand_total}}</td>
             </tr>
         </tbody>
     </table>
