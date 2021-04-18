@@ -1,32 +1,37 @@
 {% extends 'base.html' %}
-
 {% block content %}
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'CSS/form.css' %}">
+
 <div class="container">
-    <h1>Add new Paper/Magazine</h1>
+    <span class="title">Add new Paper/Magazine</span>
+    <div class="card">
+        <div class="row">
+            <div class="d-flex justify-content-center">
+                <br><br>
+                <form method="POST">
 
-    <div class="row">
-        <div class="d-flex justify-content-center">
-            <br><br>
-            <form method="POST">
+                    Name of Paper/Magazine: <input id="name" type="text" name="name">
+                    Language: <select id="language" name="language">
+                        <option value="Assamese">Assamese</option>
+                        <option value="English">English</option>
+                        <option value="Hindi">Hindi</option>
+                        <option value="Bengali">Bengali</option>
+                        <option value="Others">Others</option>
+                    </select>
+                    Price (&#8377;): <input style="width: 30%;" id="price" type="number" , name="price" min="0"
+                        value="0" step=".01">
+                    Category:<select id="category" name="category">
+                        <option value="Newspaper">Newspaper</option>
+                        <option value="Magazine">Magazine</option>
+                    </select>
+                    <!-- <p>Total Amount: {{totalAmount}}</p> -->
+                    <hr>
+                    <button class="btn-success btn-lg" id="myButton">Submit</button>
 
-                Name of Paper/Magazine: <input id="name" type="text" name="name"><br>
-                Language: <select id="language" name="language">
-                    <option value="Assamese">Assamese</option>
-                    <option value="English">English</option>
-                    <option value="Hindi">Hindi</option>
-                    <option value="Bengali">Bengali</option>
-                    <option value="Others">Others</option>
-                </select><br><br>
-                Price (&#8377;): <input id="price" type="number" , name="price" min="0" value="0" step=".01"><br>
-                Category:<select id="category" name="category">
-                    <option value="Newspaper">Newspaper</option>
-                    <option value="Magazine">Magazine</option>
-                </select><br>
-                <!-- <p>Total Amount: {{totalAmount}}</p> -->
-                <hr>
-                <button class="btn-success btn-sm" id="myButton">Submit</button>
-
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>

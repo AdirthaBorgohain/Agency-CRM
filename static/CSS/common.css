@@ -96,7 +96,7 @@ body {
 
 .customer-container {
   /* width:100px; */
-  max-height: 62%;
+  max-height: 50%;
   overflow-y: auto;
 }
 
@@ -106,13 +106,6 @@ body {
 }
 
 
-.customer-create-form input {
-  width: 250px;
-}
-
-.customer-create-form textarea {
-  border: none;
-}
 
 @media only screen and (max-device-width: 480px) {
   .tripletRow button {
