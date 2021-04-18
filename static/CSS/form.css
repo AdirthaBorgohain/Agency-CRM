@@ -53,3 +53,23 @@
     height: auto !important;
   }
   
+
+  @media only screen and (max-device-width: 480px) {
+    body {
+      font-size: 12px !important;
+      padding: 30px !important;
+    }
+    
+    .title {
+      font-size: 14px !important;
+    }
+    .card {
+      margin-top: 15px !important;
+      width: 110% !important;
+      margin-left: -5% !important;
+      margin-bottom: 10px !important;
+    }
+    input, select, textarea {
+      width: 100% !important;
+  }
+}
