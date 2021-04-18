@@ -5,9 +5,11 @@
 <header class="clearfix" style="margin-bottom: 0;">
 
     <button class="btn-outline-primary btn-sm noprint" onClick="window.print()"><strong>PRINT</strong></button>
-    <button class="btn-outline-warning btn-sm noprint" onClick="window.location= '#'"><strong>EDIT
+    <button disabled class="btn-outline-info btn-sm noprint" id="smsButton"><strong>SEND BY SMS (N/A)</strong></button>
+    <button disabled class="btn-outline-warning btn-sm noprint" onClick="window.location= '#'"><strong>EDIT
             (N/A)</strong></button>
-    <button class="btn-outline-danger btn-sm noprint" id="deleteButton"><strong>DELETE</strong></button>
+    <button style="float: right;" class="btn-outline-danger btn-sm noprint" id="deleteButton"><strong>DELETE</strong></button>
+
 
     <br>
     <br>
@@ -94,7 +96,7 @@
             </tr>
         </tbody>
     </table>
-    Payment Status: <select class="btn-sm" id="paymentStatus" name="payment_status">
+    <span class="noprint">Payment Status: <select class="btn-sm" id="paymentStatus" name="payment_status"></span>
         {% if data.invoice.is_paid == True%}
         <option value="Pending">Pending</option>
         <option selected value="Completed">Completed</option>
@@ -104,13 +106,9 @@
         {% endif %}
     </select> &nbsp;&nbsp;
     <button id="myButton" class="btn-outline-success btn-sm noprint">Save Changes</button>
-    <!-- <div id="notices">
-        <div>NOTICE:</div>
-        <div class="notice">A finance charge of 1.5% will be made on unpaid balances after 30 days.</div>
-    </div> -->
 </main>
 <footer>
-    Invoice was created on a computer and is valid without the signature and seal.
+    Invoice was generated on a computer and is valid without the signature and seal.
 </footer>
 
 <script type="text/javascript">
