@@ -1,4 +1,4 @@
-import json
+import simplejson as json
 from entities.models import Customer, Agent, Product, Invoice, Bill, OrderDetails, BillDetails
 from django.shortcuts import render
 from django.http import HttpResponse

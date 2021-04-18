@@ -1,4 +1,4 @@
-import json
+import simplejson as json
 from datetime import date
 from .models import Customer, Agent, Product, Invoice, Bill, OrderDetails, BillDetails
 from django.contrib.auth.decorators import login_required
