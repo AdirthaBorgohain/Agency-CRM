@@ -27,6 +27,9 @@ class Customer(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def encoded_id(self):
+        return self.id.replace('/', '__')
 
 class Agent(models.Model):
     id = models.CharField(max_length=8, primary_key=True)
@@ -38,6 +41,9 @@ class Agent(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def encoded_id(self):
+        return self.id.replace('/', '__')
 
 class Product(models.Model):
     name = models.CharField(max_length=20, unique=True)

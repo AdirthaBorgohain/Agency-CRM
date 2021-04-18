@@ -63,7 +63,7 @@
                 {% for agent in data.agents %}
                 <div class="col-lg-4">
                     <div class="card agent-card" style="cursor: pointer;">
-                        <a href="/agent/view/{{ agent.id }}">
+                        <a href="/agent/view/{{ agent.encoded_id }}">
                             <div>
                                 <span><strong>AGENT ID:</strong> {{ agent.id }}</span><br>
                                 <span><strong>NAME:</strong> {{ agent.name }}</span><br>
@@ -105,7 +105,7 @@
                 {% for customer in data.customers %}
                 <div class="col-lg-4">
                     <div class="card" style="cursor: pointer;">
-                        <a href="/customer/view/{{customer.id}}">
+                        <a href="/customer/view/{{customer.encoded_id}}">
                             <div>
                                 <span><strong>CUSTOMER ID:</strong> {{ customer.id }}</span><br>
                                 <span><strong>NAME:</strong> {{ customer.name }}</span><br>

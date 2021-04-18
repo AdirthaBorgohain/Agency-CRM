@@ -161,7 +161,7 @@ def invoice_details(request, invoice_id):
     customer = invoice.customer
     order_details = OrderDetails.objects.filter(invoice_id=invoice_id)
     invoice.sub_total = invoice.grand_total - invoice.additional_charges
-    print(invoice.sub_total)
+    # print(invoice.sub_total)
     data_object = {
         "invoice": invoice,
         "customer": customer,
@@ -222,6 +222,7 @@ def change_payment_status(request):
 @login_required
 def agent_details(request, agent_id):
     if request.method == 'GET':
+        agent_id = agent_id.replace('__','/')
         agent = Agent.objects.get(pk=agent_id)
         bills = Bill.objects.filter(agent_id=agent_id)
         data_object = {
@@ -241,6 +242,7 @@ def delete_agent(request, agent_id):
 @login_required
 def customer_details(request, customer_id):
     if request.method == 'GET':
+        customer_id = customer_id.replace('__','/')
         customer = Customer.objects.get(pk=customer_id)
         invoices = Invoice.objects.filter(customer_id=customer_id)
         data_object = {
