@@ -3,8 +3,19 @@ body {
   font-family: "Source Sans Pro", sans-serif !important;
 }
 
+.btn-div {
+  background-repeat: no-repeat;
+  margin-top: 8px;
+  font-size: 14px;
+  font-family: 'Spartan', sans-serif;
+  text-align: initial;
+  width: 100%; 
+  height:100%;
+}
+
 .tripletRow button {
   color: white;
+  overflow: hidden;
   width: 100%;
   height: 130px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
