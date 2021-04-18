@@ -33,7 +33,7 @@ class Agent(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=100)
     contact = models.CharField(max_length=12, unique=True)
-    commission = models.FloatField()
+    commission = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return self.name
@@ -45,7 +45,7 @@ class Product(models.Model):
         max_length=10, choices=LANGUAGE_CHOICES, default="Assamese")
     category = models.CharField(
         max_length=10, choices=CATEGORY_CHOICES, default="Newspaper")
-    price = models.FloatField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return self.name
@@ -56,8 +56,8 @@ class Invoice(models.Model):
     create_date = models.DateField()
     start_date = models.DateField()
     end_date = models.DateField()
-    additional_charges = models.FloatField(default=0)
-    grand_total = models.FloatField()
+    additional_charges = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    grand_total = models.DecimalField(max_digits=10, decimal_places=2)
     is_paid = models.BooleanField(default=False)
 
     def __str__(self):
@@ -73,9 +73,9 @@ class Bill(models.Model):
     create_date = models.DateField()
     start_date = models.DateField()
     end_date = models.DateField()
-    deductions = models.FloatField(default=0)
-    prev_balance = models.FloatField()
-    grand_total = models.FloatField()
+    deductions = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    prev_balance = models.DecimalField(max_digits=10, decimal_places=2)
+    grand_total = models.DecimalField(max_digits=10, decimal_places=2)
     is_paid = models.BooleanField(default=False)
 
     def __str__(self):
@@ -90,8 +90,8 @@ class OrderDetails(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
     quantity = models.IntegerField()
-    price = models.FloatField()
-    net_price = models.FloatField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    net_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return self.invoice.customer.name + " (" + str(self.invoice.start_date.strftime("%B")) + ")-" + self.product.name
@@ -100,8 +100,8 @@ class BillDetails(models.Model):
     bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
     quantity = models.IntegerField()
-    price = models.FloatField()
-    net_price = models.FloatField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    net_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return self.bill.agent.name + " (" + str(self.bill.start_date.strftime("%B")) + ")-" + self.product.name

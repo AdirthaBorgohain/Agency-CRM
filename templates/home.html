@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 {% load static %}
 
 {% block content %}
@@ -134,7 +135,7 @@
                                             </td>
                                             <td class="cell100 column2">{{bill.start_date}} - {{bill.end_date}}
                                             </td>
-                                            <td class="cell100 column3">&#8377; {{bill.grand_total}}</td>
+                                            <td class="cell100 column3">&#8377; {{bill.grand_total|intcomma}}</td>
                                             {% if bill.is_paid == True %}
                                             <td class="cell100 column4"><span class="dot green-dot"></span>&nbsp
                                                 Completed</td>
@@ -184,7 +185,7 @@
                                             </td>
                                             <td class="cell100 column2">{{invoice.start_date}} - {{invoice.end_date}}
                                             </td>
-                                            <td class="cell100 column3">&#8377; {{invoice.grand_total}}</td>
+                                            <td class="cell100 column3">&#8377; {{invoice.grand_total|intcomma}}</td>
                                             {% if invoice.is_paid == True %}
                                             <td class="cell100 column4"><span class="dot green-dot"></span>&nbsp
                                                 Completed</td>
@@ -225,7 +226,7 @@
                                             <td class="cell100 column1">{{product.name}}</td>
                                             <td class="cell100 column2">{{product.language}}</td>
                                             <td class="cell100 column3">{{product.category}}</td>
-                                            <td class="cell100 column4">&#8377; {{product.price}}</td>
+                                            <td class="cell100 column4">&#8377; {{product.price|intcomma}}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>

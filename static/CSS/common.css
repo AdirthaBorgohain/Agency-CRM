@@ -124,6 +124,10 @@ body {
     margin-bottom: 45px;
   }
 
+  .btn-div {
+    background-position: 78% -50% !important;
+  }
+
   .col-md-5 {
     margin-top: 20px;
   }
