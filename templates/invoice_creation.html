@@ -57,7 +57,7 @@
         <tbody>
             <tr>
                 <td style="text-align: right;" colspan="4">SUBTOTAL</td>
-                <td class="total" id="subTotal">&#8377; {{data.invoice.sub_total}}</td>
+                <td class="total" id="subTotal">&#8377; {{data.invoice.sub_total|floatformat:2}}</td>
             </tr>
             {% if data.customer_type == "Agent" %}
             <tr>
@@ -70,7 +70,7 @@
             </tr>
             <tr>
                 <td style="text-align: right;" colspan="4" class="grand total">NET TOTAL</td>
-                <td class="grand total" id="netTotal">&#8377; {{data.invoice.total}}</td>
+                <td class="grand total" id="netTotal">&#8377; {{data.invoice.total|floatformat:2}}</td>
             </tr>
             <tr>
                 <td style="text-align: right;" colspan="4" class="grand total">PREVIOUS BALANCE</td>
@@ -94,7 +94,7 @@
             {% endif %}
             <tr>
                 <td style="text-align: right;" colspan="4" class="grand total">GRAND TOTAL</td>
-                <td class="grand total" id="grandTotal">&#8377; {{data.invoice.total}}</td>
+                <td class="grand total" id="grandTotal">&#8377; {{data.invoice.total|floatformat:2}}</td>
             </tr>
         </tbody>
     </table>
