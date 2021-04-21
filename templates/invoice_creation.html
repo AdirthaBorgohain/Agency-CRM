@@ -40,10 +40,10 @@
     <button id="autoGenerate" class="btn-dark btn-sm">Autogenerate Invoice</button>
     {% endif %}
     <br><br>
-    <table>
+    <table id="invoice-table">
         <thead>
             <tr>
-                <th style="width: 10%;" class="service">SL NO.</th>
+                <th style="width: 10%;" class="service"></th>
                 <th class="desc">PAPER/MAGAZINE</th>
                 <th>PRICE</th>
                 <th>QTY</th>
@@ -113,9 +113,11 @@
     if ("{{data.customer_type}}" == "Agent") {
         var allCommissions = JSON.parse('{{data.commission_dict | safe}}')
         document.title = "Create Agent Bill"
+        var deleteFactor = 2
     }
     else {
         document.title = "Create Customer Invoice"
+        var deleteFactor = 4
     }
 
 
@@ -134,7 +136,8 @@
 
         html_code = `
         <tr id=`+ n_count + `>
-            <td class="service">` + n_count + `</td>
+            <td style="text-align: center" class="service">
+                <i style="color: red; cursor: pointer;" class="far fa-minus-square"></i></td>
             <td class="desc">
                 <select class='product' required> 
                     <option hidden disabled selected value> -- Select a Paper/Magazine -- </option>
@@ -247,6 +250,11 @@
             return true
         }
     }
+
+    $(document).on("click", ".fa-minus-square", function () {
+        $(this).parent().parent().remove();
+        calculateTotals()
+    })
 
     //checks for the button click event
     $("#billButton").click(function (e) {
