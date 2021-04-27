@@ -22,7 +22,7 @@
             <div><span>NAME</span> <select id="customer" name="name" required>
                     <option hidden disabled selected value> -- Select Name -- </option>
                     {% for customer in data.customers %}
-                    <option value='{{customer.id}}'>{{customer}}</option>
+                    <option value='{{customer.encoded_id}}'>{{customer}}</option>
                     {% endfor %}
                 </select></div>
             <div><span>BILLING DATE</span> {{data.date_today}}</div>

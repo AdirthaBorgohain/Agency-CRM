@@ -148,6 +148,7 @@ def create_invoice(request):
 @login_required
 def autogenerate_invoice(request, customer_id):
     if request.method == 'POST':
+        customer_id = customer_id.replace('__','/')
         print("AUTOGENERATING INVOICE FOR CUSTOMER ID: ", customer_id)
         recent_invoice = Invoice.objects.filter(customer_id=customer_id).latest("end_date")
         products = OrderDetails.objects.filter(invoice_id=recent_invoice).values_list('product', flat=True)
