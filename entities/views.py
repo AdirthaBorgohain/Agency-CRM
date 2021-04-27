@@ -55,6 +55,7 @@ def create_bill(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
         agent_id = data.get("agent")
+        agent_id = agent_id.replace('__','/')
         start_date = data.get("startDate")
         end_date = data.get("endDate")
         product_ids = data.get("products")
@@ -105,6 +106,7 @@ def create_invoice(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
         customer_id = data.get("customer")
+        customer_id = customer_id.replace('__','/')
         start_date = data.get("startDate")
         end_date = data.get("endDate")
         product_ids = data.get("products")
