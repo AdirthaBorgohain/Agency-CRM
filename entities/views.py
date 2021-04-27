@@ -257,6 +257,7 @@ def customer_details(request, customer_id):
 
 @login_required
 def delete_customer(request, customer_id):
+    customer_id = customer_id.replace('__','/')
     print("CUSTOMER ID TO BE DELETED: ", customer_id)
     Customer.objects.filter(id=customer_id).delete()
     return HttpResponse("Customer Deleted...")
