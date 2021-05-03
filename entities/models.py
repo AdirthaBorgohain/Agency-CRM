@@ -64,6 +64,7 @@ class Invoice(models.Model):
     end_date = models.DateField()
     additional_charges = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     grand_total = models.DecimalField(max_digits=10, decimal_places=2)
+    paid_amount = models.DecimalField(max_digits=10, decimal_places=2)
     is_paid = models.BooleanField(default=False)
 
     def __str__(self):
@@ -82,6 +83,7 @@ class Bill(models.Model):
     deductions = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     prev_balance = models.DecimalField(max_digits=10, decimal_places=2)
     grand_total = models.DecimalField(max_digits=10, decimal_places=2)
+    paid_amount = models.DecimalField(max_digits=10, decimal_places=2)
     is_paid = models.BooleanField(default=False)
 
     def __str__(self):

@@ -19,4 +19,6 @@ urlpatterns = [
     path("agent/delete/<str:agent_id>", views.delete_agent, name="delete_agent"),
     path("customer/view/<str:customer_id>", views.customer_details, name="customer_details"),
     path("customer/delete/<str:customer_id>", views.delete_customer, name="delete_customer"),
+    path("generate_upi_link", views.generate_upi_link, name="generate_upi_link"),
+    path("add_payment", views.add_payment, name="add_payment")
     ]

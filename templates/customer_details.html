@@ -37,8 +37,38 @@
             </div>
         </nav>
         <div class="container">
+
+
+            <div class="row">
+                <div class="col-12 col-md-10">
+                    <div class="row tripletRow">
+                        <div class="col-lg-4">
+                            <button style="background-image: url('/static/images/invoice.jpg'); position:relative" class="btn">
+                                    <span class="status-label">Amount Due:</span>
+                                    <span class="status-figure" style="color: #EC563D;">&#8377; {{data.total_due}}</span>
+                            </button>
+                        </div>
+                        <div class="col-lg-4">
+                            <button style="background-image: url('/static/images/invoice.jpg'); position:relative" class="btn">
+                            <span class="status-label">Amount Pending:</span>
+                                <span class="status-figure" style="color: #EEB636;">&#8377; {{data.pending_amount}}</span>
+                        </button>
+                        </div>
+                        <div class="col-lg-4">
+                            <button style="background-image: url('/static/images/invoice.jpg'); position:relative" class="btn">
+                                <span class="status-label">Amount Paid:</span>
+                                <span class="status-figure" style="color: #5AB152;">&#8377; {{data.paid_amount}}</span>
+                        </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2"></div>
+            </div>
+
+
+
             <div class="card"
-                style="background-image: url('/static/images/people.jpg'); background-position: right; background-repeat: no-repeat">
+                style="background-image: url('/static/images/people.jpg'); background-position: right; background-repeat: no-repeat; margin-top: 2%">
                 <div class="row">
                     <div class="details-card col-lg-7">
                         <label for="id"><strong>{{data.customer_type}} ID:</strong>&nbsp;</label>
@@ -61,6 +91,13 @@
                         <button id="updateButton" class="btn-success btn-lg" style="display: none;">Update
                             Details</button> &nbsp;
                         <button id="cancelButton" class="btn-danger btn-lg" style="display: none;">Cancel</button>
+                        <!-- <div class="card">
+                            <ul>
+                            <li>TOTAL DUE: &#8377; 53000</li>
+                            <li>PAYMENT PENDING: &#8377; 50000</li>
+                            <li>PAYMENT COMPLETED: &#8377; 3000</li>
+                        </ul> -->
+                        <!-- </div> -->
                     </div>
                 </div>
             </div>
@@ -154,7 +191,7 @@
         } else {
             delete_url = "/customer/delete/{{data.customer.id}}"
         }
-        if (confirm("Are you sure you want to delete this {{data.customer_type}}? ") == true) {
+        if (confirm("Are you sure you want to delete this {{data.customer_type}}? This will remove all associated bills/invoices with the {{data.customer_type}}") == true) {
             console.log("Deleting {{data.customer.name}}...")
             $.ajax({
                 type: "POST",

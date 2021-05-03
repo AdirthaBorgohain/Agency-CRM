@@ -13,6 +13,14 @@ body {
   height:100%;
 }
 
+.btn-sms, .btn-sms:active, .btn-sms:visited {
+  background-color: #2f0f57 !important;
+}
+
+.btn-sms:hover {
+  background-color: #583385 !important;
+}
+
 .tripletRow button {
   color: white;
   overflow: hidden;
@@ -36,6 +44,7 @@ body {
 }
 
 .card {
+  border-radius: 20px;
   padding: 5%;
   margin-top: 5%;
   /* Add shadows to create the "card" effect */
@@ -65,6 +74,10 @@ body {
 
 .green-dot {
   background-color: rgb(56, 141, 23);
+}
+
+.purple-dot {
+  background-color: rgb(74, 28, 131);
 }
 
 /* Search Bar */
@@ -105,6 +118,24 @@ body {
   transform: scale(1.02) !important;
 }
 
+.status-label {
+  display: flex;
+  color: grey;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Spartan';
+  top: 20px;
+  position: absolute;
+}
+
+.status-figure {
+  position: absolute;
+  left: 15px;
+  font-size: 30px;
+  font-weight: bolder;
+  top: 45px;
+  letter-spacing: 2px;
+}
 
 
 @media only screen and (max-device-width: 480px) {

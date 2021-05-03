@@ -1,3 +1,6 @@
+import os
+import urllib
+import requests
 import simplejson as json
 from datetime import date
 from .models import Customer, Agent, Product, Invoice, Bill, OrderDetails, BillDetails
@@ -6,8 +9,11 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic.list import ListView
 
-# Create your views here.
+# API_KEY = '35928f763842cd788980b472cbd1175bf27d4'
+API_KEY = os.environ.get("SHORTENER_TOKEN")
+shortened_urls = {"invoices": {}, "bills": {}}
 
+# Create your views here.
 
 @login_required
 def add_customer(request):
@@ -228,9 +234,16 @@ def agent_details(request, agent_id):
         agent_id = agent_id.replace('__','/')
         agent = Agent.objects.get(pk=agent_id)
         bills = Bill.objects.filter(agent_id=agent_id)
+        total_due, paid_amount = 0, 0
+        for bill in bills:
+            total_due += bill.grand_total
+            paid_amount += bill.paid_amount
         data_object = {
         "customer": agent,
         "invoices": bills,
+        "total_due": total_due,
+        "pending_amount": total_due - paid_amount,
+        "paid_amount": paid_amount,
         "customer_type": "Agent"
     }
     return render(request, "customer_details.html", {"data": data_object})
@@ -248,9 +261,16 @@ def customer_details(request, customer_id):
         customer_id = customer_id.replace('__','/')
         customer = Customer.objects.get(pk=customer_id)
         invoices = Invoice.objects.filter(customer_id=customer_id)
+        total_due, paid_amount = 0, 0
+        for invoice in invoices:
+            total_due += invoice.grand_total
+            paid_amount += invoice.paid_amount
         data_object = {
         "customer": customer,
         "invoices": invoices,
+        "total_due": total_due,
+        "pending_amount": total_due - paid_amount,
+        "paid_amount": paid_amount,
         "customer_type": "Customer"
     }
     return render(request, "customer_details.html", {"data": data_object})
@@ -279,3 +299,40 @@ def update_customer(request):
         existing_agent = Agent.objects.filter(pk=customer_id).update(name=name, address=address, contact=contact, commission=commission)
         print("UPDATED AND SAVED AGENT")
     return HttpResponse(json.dumps({"status": "ok"}))
+
+def generate_upi_link(request):
+    data = json.loads(request.body.decode('utf-8'))
+    amount = data.get("amount_due")
+    invoice_type = data.get("type")
+    invoice_id = data.get("id")
+    date_today = date.today().strftime("%B, %Y")
+    print("AMOUNT DUE: ", amount)
+    if invoice_type == "Agent Bill":
+        cache_dict = shortened_urls["bills"]
+    else:
+        cache_dict = shortened_urls["invoices"]
+    if len(cache_dict) > 100:
+        cache_dict.clear()
+    shortened_url = cache_dict.get(invoice_id)
+    if not shortened_url:
+        upi_url = f"upi://pay?pa=9954173322@okbizaxis&pn=BIDIT DEV SARMAH&tn=Payment&am={amount}&cu=INR"
+        url = urllib.parse.quote(upi_url)
+        r = requests.get(f'http://cutt.ly/api/api.php?key={API_KEY}&short={url}')
+        try:
+            shortened_url = r.json()['url']['shortLink']
+            cache_dict[invoice_id] = shortened_url
+        except KeyError:
+            shortened_url = None
+    return HttpResponse(json.dumps({"link": shortened_url, "date_today": date_today}))
+
+def add_payment(request):
+    data = json.loads(request.body.decode('utf-8'))
+    amount_paid = float(data.get("amount_paid"))
+    invoice_id = data.get("invoice_id")
+    customer_type = data.get("customer_type")
+    if customer_type == "Agent":
+        Bill.objects.filter(id=invoice_id).update(paid_amount=amount_paid)
+    elif customer_type == "Customer":
+        Invoice.objects.filter(id=invoice_id).update(paid_amount=amount_paid)
+    return HttpResponse(json.dumps({"status": "ok"}))
+

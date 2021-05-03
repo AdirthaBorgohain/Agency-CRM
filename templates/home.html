@@ -117,7 +117,7 @@
                                         <tr class="row100 head">
                                             <th class="cell100 column1">Agent</th>
                                             <th class="cell100 column2">Billing Period</th>
-                                            <th class="cell100 column3">Amount Due</th>
+                                            <th class="cell100 column3">Total Due</th>
                                             <th class="cell100 column4">Payment Status</th>
                                         </tr>
                                     </thead>
@@ -138,6 +138,9 @@
                                             {% if bill.is_paid == True %}
                                             <td class="cell100 column4"><span class="dot green-dot"></span>&nbsp
                                                 Completed</td>
+                                            {% elif bill.is_paid == False and bill.paid_amount %}
+                                            <td class="cell100 column4"><span class="dot purple-dot"></span>&nbsp
+                                                Partial</td>
                                             {% else %}
                                             <td class="cell100 column4"><span class="dot orange-dot"></span>&nbsp
                                                 Pending</td>
@@ -167,7 +170,7 @@
                                         <tr class="row100 head">
                                             <th class="cell100 column1">Customer</th>
                                             <th class="cell100 column2">Billing Period</th>
-                                            <th class="cell100 column3">Amount Due</th>
+                                            <th class="cell100 column3">Total Due</th>
                                             <th class="cell100 column4">Payment Status</th>
                                         </tr>
                                     </thead>
@@ -188,6 +191,9 @@
                                             {% if invoice.is_paid == True %}
                                             <td class="cell100 column4"><span class="dot green-dot"></span>&nbsp
                                                 Completed</td>
+                                            {% elif invoice.is_paid == False and invoice.paid_amount %}
+                                            <td class="cell100 column4"><span class="dot purple-dot"></span>&nbsp
+                                                Partial</td>
                                             {% else %}
                                             <td class="cell100 column4"><span class="dot orange-dot"></span>&nbsp
                                                 Pending</td>

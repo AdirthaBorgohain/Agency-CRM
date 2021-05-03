@@ -1,14 +1,61 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
+
 <link rel="stylesheet" type="text/css" href="{% static 'CSS/invoice.css' %}">
 <header class="clearfix" style="margin-bottom: 0;">
-
     <button class="btn-outline-primary btn-sm noprint" onClick="window.print()"><strong>PRINT</strong></button>
-    <button disabled class="btn-outline-info btn-sm noprint" id="smsButton"><strong>SEND BY SMS (N/A)</strong></button>
-    <button disabled class="btn-outline-warning btn-sm noprint" onClick="window.location= '#'"><strong>EDIT
-            (N/A)</strong></button>
+    <button class="btn-outline-info btn-sm noprint" id="smsButton" data-bs-toggle="modal" data-bs-target="#Modal-sms"><strong>GENERATE
+            SMS</strong></button>
+    <!-- <button disabled class="btn-outline-warning btn-sm noprint" onClick="window.location= '#'"><strong>EDIT
+            (N/A)</strong></button> -->
+    <button class="noprint btn-sm btn-success" id="addPayment" data-bs-toggle="modal" data-bs-target="#Modal-paid">ADD PAYMENT</button>
     <button style="float: right;" class="btn-outline-danger btn-sm noprint" id="deleteButton"><strong>DELETE</strong></button>
+
+    <!-- SMS Modal -->
+    <div id="Modal-sms" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close btn-xs" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-success" style="font-weight: bold;" id="copy">
+                        Copy Text</button>
+                    <button type="button" class="btn btn-sm btn-sms" style="font-weight: bold; color:white;" id="sendSMS">
+                        SEND SMS</button>
+                </div>
+            </div>
+            <div class="toast" style="width: fit-content; float: right;">
+                <div class="toast-header" style="color: black; background-color: floralwhite">
+                    Text Copied
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Payment Modal -->
+    <div id="Modal-paid" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close btn-xs" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Enter amount paid (₹):<input id="paid-amount" type="number" placeholder="{{data.invoice.paid_amount}}" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-sms" data-bs-dismiss="modal" style="font-weight: bold; color:white;" id="confirm-payment">
+                        CONFIRM PAYMENT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <br>
@@ -27,11 +74,11 @@
     </div>
     <div id="project">
         {% if data.customer_type == "Agent" %}
-            <div><span>BILL ID</span> {{data.invoice.id|stringformat:"06d"}}</div>
-            <div><span>AGENT ID</span> {{data.customer.id}}</div>
+        <div><span>BILL ID</span> {{data.invoice.id|stringformat:"06d"}}</div>
+        <div><span>AGENT ID</span> {{data.customer.id}}</div>
         {% else %}
-            <div><span>INVOICE ID</span> {{data.invoice.id|stringformat:"06d"}}</div>
-            <div><span>CUSTOMER ID</span> {{data.customer.id}}</div>
+        <div><span>INVOICE ID</span> {{data.invoice.id|stringformat:"06d"}}</div>
+        <div><span>CUSTOMER ID</span> {{data.customer.id}}</div>
         {% endif %}
         <div><span>NAME</span> {{ data.customer.name }}</div>
         <div><span>ADDRESS</span> {{ data.customer.address }}</div>
@@ -41,10 +88,11 @@
     </div>
 </header>
 <hr>
-        <p id="desc">
-            AGENT:- All kinds of News Papers, Magazines & G.I.C/Book Seller, School & Office Stationary suppliers.<br>
-            ADVERTISING AGENT of All leading newspapers in Assam & India (National Paper)/XEROX/Print Out/DTP Facility also available here.
-        </p>
+<p id="desc">
+    AGENT:- All kinds of News Papers, Magazines & G.I.C/Book Seller, School & Office Stationary suppliers.<br>
+    ADVERTISING AGENT of All leading newspapers in Assam & India (National Paper)/XEROX/Print Out/DTP Facility also
+    available here.
+</p>
 <hr>
 <main>
     <table>
@@ -94,16 +142,26 @@
                 <td style="text-align: right;" colspan="4" class="grand total">GRAND TOTAL</td>
                 <td class="grand total">&#8377; {{data.invoice.grand_total}}</td>
             </tr>
+            <tr>
+                <td style="text-align: right;" colspan="4">AMOUNT PAID</td>
+                <td class="total paid-val">&#8377; {{data.invoice.paid_amount}}</td>
+            </tr>
         </tbody>
     </table>
     <span class="noprint">Payment Status: <select class="btn-sm" id="paymentStatus" name="payment_status"></span>
-        {% if data.invoice.is_paid == True%}
-        <option value="Pending">Pending</option>
-        <option selected value="Completed">Completed</option>
-        {% else %}
-        <option selected value="Pending">Pending</option>
-        <option value="Completed">Completed</option>
-        {% endif %}
+    {% if data.invoice.paid_amount and data.invoice.is_paid == False %}
+    <option value="Pending">Pending</option>
+    <option selected value="Pending">Partial</option>
+    <option value="Completed">Completed</option>
+    {% elif data.invoice.is_paid == True %}
+    <option value="Pending">Pending</option>
+    <option value="Pending">Partial</option>
+    <option selected value="Completed">Completed</option>
+    {% else %}
+    <option selected value="Pending">Pending</option>
+    <option value="Pending">Partial</option>
+    <option value="Completed">Completed</option>
+    {% endif %}
     </select> &nbsp;&nbsp;
     <button id="myButton" class="btn-outline-success btn-sm noprint">Save Changes</button>
 </main>
@@ -123,6 +181,38 @@
         delete_url = "/invoice/delete/" + invoice_id
     }
 
+    $('#smsButton').click(function (e) {
+        let json_data = {
+            amount_due: '{{data.invoice.grand_total}}',
+            type: invoice_type,
+            id: '{{data.invoice.id}}'
+        }
+
+        $('header, main, #desc').css({'opacity': '0.4'})
+
+        $.ajax({
+            type: "POST",
+            url: "/generate_upi_link",
+            contentType: "application/json",
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            data: JSON.stringify(json_data),
+            dataType: "json",
+
+            //if received a response from the server
+            success: function (response) {
+                $('header, main, #desc').css({'opacity': '1'})
+                console.log(response["link"])
+                let short_url = response["link"]
+                let date_today = response["date_today"]
+                let modal_html = '<div id="copy-text">Your Newspaper outstanding amount is &#8377; {{data.invoice.grand_total}}/- upto ' + date_today +
+                    '<br><br>Shop Timings - 5:00 AM to 8:00 PM <br> --OR-- <br> Account Pay-<br>A/C No. 20156647246 <br> IFSC: SBIN0013381 <br> Name: BIDIT DEV SARMAH <br>' +
+                    '--OR-- <br> UPI- ' + short_url + '<br><br> BIDIT DEV SARMAH <br> M/S SARMAH BROTHERS <br> Contact No. 9954173322 / 7002031503</div>'
+                $('.modal-body').html(modal_html)
+                $('#Modal').modal('show');
+            },
+        })
+
+    });
 
     $("#deleteButton").click(function (e) {
         e.preventDefault()
@@ -148,7 +238,6 @@
     $("#myButton").click(function (e) {
         e.preventDefault()
         console.log('{{ csrf_token }}')
-        console.log("HERE")
         //get the form data and put into a var
         var json_data = {
             payment_status: $("#paymentStatus").val(),
@@ -174,6 +263,69 @@
             },
         });
     });
+    
+    $('#confirm-payment').click(function(e){
+        console.log("Adding new payment...")
+        let amount_paid = $('#paid-amount').val()
+        console.log("PAID AMOUNT IS: ", amount_paid)
+        var json_data = {
+            amount_paid: amount_paid,
+            invoice_id: '{{ data.invoice.id }}',
+            customer_type: '{{data.customer_type}}',
+        }
+        console.log("JSON DATA: ", JSON.stringify(json_data))
+        //make the AJAX request, dataType is set to json i.e. we are expecting JSON data in response from the server
+        $.ajax({
+            type: "POST",
+            url: "/add_payment",
+            contentType: "application/json",
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            data: JSON.stringify(json_data),
+            dataType: "json",
+
+            //if received a response from the server
+            success: function (response) {
+                if (response.status == "ok") {
+                    alert("Payment of ₹" + amount_paid + " succesfully entered into database.")
+                    $('.paid-val').text('₹' + amount_paid)
+                    $("#paymentStatus option").filter(function() {
+                        return $(this).text() == "Partial";
+                      }).prop('selected', true);
+                }
+            },
+        });
+    })
+
+    $('#sendSMS').click(function (e) {
+        let customer_number = '{{data.customer.contact}}'
+        console.log("sending SMS to "+ customer_number)
+        let el = document.getElementById('copy-text')
+        let sms_text = el.innerText
+        console.log("SMS TEXT: " + encodeURI(sms_text))
+        window.location = 'sms:' + customer_number + ';?&body=' + encodeURI(sms_text);
+    })
+
+    $('#copy').click(function (e) {
+        var result = copyToClipboard((document.getElementById('copy-text')));
+        console.log("copied?", result);
+        if (result == true) {
+            $('.toast').toast('show');
+        }
+    })
+
+    function copyToClipboard(el) {
+        function listener(e) {
+          e.clipboardData.setData("text/plain", el.innerText);
+          e.clipboardData.setData("text/html", el.innerHTML);
+          // https://w3c.github.io/clipboard-apis/#override-copy
+          e.preventDefault();
+        }
+        document.addEventListener("copy", listener);
+        document.execCommand("copy");
+        document.removeEventListener("copy", listener);
+        return true
+      }
+      
 </script>
 
 {% endblock %}
