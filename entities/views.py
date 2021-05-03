@@ -9,7 +9,6 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic.list import ListView
 
-# API_KEY = '35928f763842cd788980b472cbd1175bf27d4'
 API_KEY = os.environ.get("SHORTENER_TOKEN")
 shortened_urls = {"invoices": {}, "bills": {}}
 
@@ -80,7 +79,7 @@ def create_bill(request):
         net_total = sub_total - float(deductions)
         grand_total = net_total + float(prev_balance)
         bill = Bill(agent_id=agent_id, start_date=start_date, end_date=end_date,
-                    deductions=deductions, prev_balance=prev_balance, grand_total=grand_total, create_date=date_today)
+                    deductions=deductions, prev_balance=prev_balance, grand_total=grand_total, create_date=date_today, paid_amount=0.00)
         bill.save()
         for product_id, product_price, quantity in zip(product_ids, product_prices, quantities):
             order_details = BillDetails(bill_id=bill.id, product_id=product_id, quantity=quantity,
@@ -130,7 +129,7 @@ def create_invoice(request):
             total_amount += int(quantity)*float(product_price)
         total_amount += float(add_charges)
         invoice = Invoice(customer_id=customer_id, start_date=start_date,
-                          end_date=end_date, additional_charges=add_charges, grand_total=total_amount, create_date=date_today)
+                          end_date=end_date, additional_charges=add_charges, grand_total=total_amount, create_date=date_today, paid_amount=0.00)
         invoice.save()
         for product_id, product_price, quantity in zip(product_ids, product_prices, quantities):
             order_details = OrderDetails(invoice_id=invoice.id, product_id=product_id, quantity=quantity,
