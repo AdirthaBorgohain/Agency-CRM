@@ -79,7 +79,7 @@
                         <textarea rows="3" cols="40" name="address" id="address"
                             disabled>{{data.customer.address}}</textarea>
                         <label for="contact"><strong>Contact No.:</strong>&nbsp;</label>
-                        <input name="contact" id="contact" value="{{data.customer.contact}}" disabled />
+                        <input name="contact" id="contact" type="number" value="{{data.customer.contact}}" disabled />
                         {% if data.customer_type == "Agent"%}
                         <label for="commission"><strong>Commission (%):</strong>&nbsp;</label>
                         <input name="commission" id="commission" value="{{data.customer.commission}}" disabled />

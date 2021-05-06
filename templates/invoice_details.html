@@ -81,7 +81,9 @@
         <div><span>CUSTOMER ID</span> {{data.customer.id}}</div>
         {% endif %}
         <div><span>NAME</span> {{ data.customer.name }}</div>
+        {% if data.customer_type == "Agent" %}
         <div><span>ADDRESS</span> {{ data.customer.address }}</div>
+        {% endif %}
         <div><span>CONTACT</span> {{ data.customer.contact }}</div>
         <div><span>BILLING DATE</span> {{ data.invoice.create_date }}</div>
         <div><span>BILLING PERIOD</span> {{data.invoice.start_date}} - {{data.invoice.end_date}}</div>
