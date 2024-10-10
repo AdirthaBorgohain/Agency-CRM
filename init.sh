@@ -35,14 +35,21 @@ check_postgres
 
 echo "initializing django..."
 
-# Apply migrations
+# Apply migrations and initialize static files
+python manage.py collectstatic --noinput
 python manage.py migrate
 
-# Create superuser (if not exists)
-if [ -z "$(python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); print(User.objects.filter(username=os.environ.get('DJANGO_SUPERUSER_USERNAME')).exists())")" ]; then
-  echo "Creating superuser..."
-  python manage.py createsuperuser --no-input
-fi
+# Check if superuser exists, create only if it doesn't
+echo "Checking for superuser..."
+python manage.py shell <<EOF
+from django.contrib.auth import get_user_model
+User = get_user_model()
+if not User.objects.filter(username='$DJANGO_SUPERUSER_USERNAME').exists():
+    User.objects.create_superuser('$DJANGO_SUPERUSER_USERNAME', '$DJANGO_SUPERUSER_EMAIL', '$DJANGO_SUPERUSER_PASSWORD')
+    print("Superuser created.")
+else:
+    print("Superuser already exists.")
+EOF
 
 # Run Django development server
 python manage.py runserver 0.0.0.0:8000
